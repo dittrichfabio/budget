@@ -1,4 +1,5 @@
 from AccountHelper import AccountHelper
+from RuleHelper import RuleHelper
 import click
 
 
@@ -49,3 +50,29 @@ def set_balance(acc_name, new_acc_balance):
     acc = AccountHelper()
     acc.set_balance(acc_name, new_acc_balance)
 
+
+@account.command('get_account_id')
+@click.argument('acc_name')
+def get_account_id(acc_name):
+    acc = AccountHelper()
+    print(acc.get_account_id(acc_name))
+
+
+@cli.group()
+def rule():
+    """Budget rules management"""
+
+
+@rule.command('create')
+@click.argument('description1', required=True)
+@click.argument('description2', required=True)
+@click.argument('acc_name', required=True)
+def create_rule(description1, description2, acc_name):
+    rul = RuleHelper()
+    rul.create_rule(description1, description2, acc_name)
+
+
+@rule.command('list')
+def list_rules():
+    rul = RuleHelper()
+    rul.list_rules()

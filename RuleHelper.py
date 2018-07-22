@@ -1,51 +1,59 @@
 import sys
 import sqlite3
-import Account
+import Rule
+from AccountHelper import AccountHelper
 
 
 
-class AccountHelper:
+class RuleHelper:
 
     def __init__(self):
-        """Creates connection to the database, checks if accounts table exists and creates in case it doesn't"""
+        """Creates connection to the database, checks if rules table exists and creates in case it doesn't"""
         try:
             self.conn = sqlite3.connect('db/budget.db')
             self.c = self.conn.cursor()
         except sqlite3.Error as e:
             print("Error connecting to database!")
 
-        self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='accounts'")
+        self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rules'")
         if (self.c.fetchone() == None):
-            print('Creating accounts table')
-            self.c.execute("""CREATE TABLE accounts (acc_id integer primary key, acc_number text, acc_name text, acc_balance integer)""")
+            print('Creating rules table')
+            self.c.execute("""CREATE TABLE rules (rule_id integer primary key, description1 text, description2 text, account_id integer)""")
         else:
-            print('accounts table already exists')
+            print('rules table already exists')
         self.conn.commit()
 
-    def get_account_id(self, acc_name):
-        self.c.execute("SELECT accounts.acc_id FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
-        acc_id = self.c.fetchone()
-        if (acc_id == None):
-            return None
+    def create_rule(self, description1, description2, acc_name):
+        """Checks if rule already exists (both descriptions). If it doesn't, creates it."""
+        self.c.execute("SELECT * FROM rules WHERE description1=:description1 and description2=:description2", {'description1': description1, 'description2': description2})
+        if (self.c.fetchone() != None):
+            print('Rule already in the Database! Aborting!')
+            sys.exit(1)
+
+        acc = AccountHelper()
+        acc_id = acc.get_account_id(acc_name)
+
+        if acc_id:
+            self.c.execute("INSERT INTO rules VALUES (NULL, :description1, :description2, :acc_id)", {'description1': description1, 'description2': description2, 'acc_id': acc_id})
+            print('Created rule: description1 = `{}`, description2 = `{}` that maps to account `{}`.'.format(description1, description2, acc_name))
         else:
-            return acc_id[0]
-
-    def create_account(self, acc_number, acc_name, acc_balance):
-        """Checks if account already exists (account number). If it doesn't, creates it."""
-        self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
-        if (self.c.fetchone() != None):
-            print('Account number `{}` is already in the Database! Aborting!'.format(acc_number))
+            print('Account `{}` doesn\'t exist!'.format(acc_name))
             sys.exit(1)
-
-        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
-        if (self.c.fetchone() != None):
-            print('Account `{}` is already in the Database! Aborting!'.format(acc_name))
-            sys.exit(1)
-
-        self.c.execute("INSERT INTO accounts VALUES (NULL, :acc_number, :acc_name, :acc_balance)", {'acc_number': acc_number, 'acc_name': acc_name, 'acc_balance': acc_balance})
-        print('Created account `{}` with the account number `{}` and balance `{}`.'.format(acc_name, acc_number, acc_balance))
 
         self.conn.commit()
+
+    def list_rules(self):
+        """Lists all accounts"""
+        self.c.execute("SELECT * FROM rules")
+        print('Listing all rules:')
+        for rul in self.c.fetchall():
+            self.c.execute("SELECT accounts.acc_name FROM accounts WHERE acc_id=:acc_id", {'acc_id': rul[3]})
+            acc = self.c.fetchone()
+            print('Rule: description1 = `{}`, description2 = `{}` that maps to account `{}`'.format(rul[1], rul[2], acc[0]))
+
+
+
+
 
     def rename_account(self, acc_name, new_acc_name):
         """Renames an existing account (account number)"""
@@ -58,12 +66,6 @@ class AccountHelper:
             sys.exit(1)
         self.conn.commit()
 
-    def list_accounts(self):
-        """Lists all accounts"""
-        self.c.execute("SELECT * FROM accounts")
-        print('Listing all accounts:')
-        for acc in self.c.fetchall():
-            print('Account `{}` with number `{}` has a balance of `{}`'.format(acc[2], acc[1], acc[3]))
 
     def delete_account(self, acc_name):
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
