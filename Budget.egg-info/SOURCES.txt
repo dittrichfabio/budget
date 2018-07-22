@@ -1,7 +1,0 @@
-budget.py
-Budget.egg-info/PKG-INFO
-Budget.egg-info/SOURCES.txt
-Budget.egg-info/dependency_links.txt
-Budget.egg-info/entry_points.txt
-Budget.egg-info/requires.txt
-Budget.egg-info/top_level.txt

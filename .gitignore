@@ -1,1 +1,3 @@
-__pycache*
+__pycache__/
+Budget.egg-info/
+.vscode/
