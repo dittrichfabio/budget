@@ -17,7 +17,6 @@ class RuleHelper:
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rules'")
         if (self.c.fetchone() == None):
-            print('Creating rules table')
             self.c.execute("""CREATE TABLE rules (rule_id integer primary key, rule_name text, rule_description1 text, rule_description2 text, account_id integer)""")
         self.conn.commit()
 
@@ -51,7 +50,7 @@ class RuleHelper:
             for rul in rules:
                 self.c.execute("SELECT accounts.acc_name FROM accounts WHERE acc_id=:acc_id", {'acc_id': rul[4]})
                 acc = self.c.fetchone()
-                print('Rule {}: rule_description1 = `{}`, rule_description2 = `{}` that maps to account `{}`'.format(rul[1], rul[2], rul[3], acc[0]))
+                print('Rule `{}`: rule_description1 = `{}`, rule_description2 = `{}` that maps to account `{}`'.format(rul[1], rul[2], rul[3], acc[0]))
 
     def rename_rule(self, rule_name, new_rule_name):
         """Renames an existing rule"""

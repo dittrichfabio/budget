@@ -14,7 +14,7 @@ def cli():
 ##################################################################
 @cli.group()
 def account():
-    """Manages accounts"""
+    """Manages Accounts"""
 
 @account.command('create')
 @click.argument('acc_number', required=True)
@@ -60,7 +60,7 @@ def get_account_id(acc_name):
 ##################################################################
 @cli.group()
 def rule():
-    """Budget rules management"""
+    """Manages Rules"""
 
 @rule.command('create')
 @click.argument('name', required=True)
@@ -94,7 +94,7 @@ def delete_rule(rule_name):
 ##################################################################
 @cli.group()
 def budget():
-    """Budget rules management"""
+    """Manages Budgets"""
 
 @budget.command('create')
 @click.argument('budget_name', required=True)

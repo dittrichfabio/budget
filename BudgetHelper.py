@@ -18,7 +18,6 @@ class BudgetHelper:
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='budget'")
         if (self.c.fetchone() == None):
-            print('Creating budget table')
             self.c.execute("""CREATE TABLE budget (rule_id integer primary key, budget_name text, budget_value integer, account_id integer)""")
         self.conn.commit()
 

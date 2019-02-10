@@ -16,7 +16,6 @@ class AccountHelper:
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='accounts'")
         if (self.c.fetchone() == None):
-            print('Creating accounts table')
             self.c.execute("""CREATE TABLE accounts (acc_id integer primary key, acc_number text, acc_name text, acc_balance integer)""")
         self.conn.commit()
 
