@@ -10,6 +10,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        budget=budget:cli
+        budget=main:cli
     ''',
 )

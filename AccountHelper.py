@@ -18,8 +18,6 @@ class AccountHelper:
         if (self.c.fetchone() == None):
             print('Creating accounts table')
             self.c.execute("""CREATE TABLE accounts (acc_id integer primary key, acc_number text, acc_name text, acc_balance integer)""")
-        else:
-            print('accounts table already exists')
         self.conn.commit()
 
     def get_account_id(self, acc_name):
@@ -34,12 +32,12 @@ class AccountHelper:
         """Checks if account already exists (account number). If it doesn't, creates it."""
         self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         if (self.c.fetchone() != None):
-            print('Account number `{}` is already in the Database! Aborting!'.format(acc_number))
+            print('There\'s already an account with number `{}` in the Database! Aborting!'.format(acc_number))
             sys.exit(1)
 
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
         if (self.c.fetchone() != None):
-            print('Account `{}` is already in the Database! Aborting!'.format(acc_name))
+            print('There\'s already an account called `{}` in the Database! Aborting!'.format(acc_name))
             sys.exit(1)
 
         self.c.execute("INSERT INTO accounts VALUES (NULL, :acc_number, :acc_name, :acc_balance)", {'acc_number': acc_number, 'acc_name': acc_name, 'acc_balance': acc_balance})
@@ -48,7 +46,11 @@ class AccountHelper:
         self.conn.commit()
 
     def rename_account(self, acc_name, new_acc_name):
-        """Renames an existing account (account number)"""
+        """Renames an existing account"""
+        self.c.execute("SELECT * FROM accounts WHERE acc_name=:new_acc_name", {'new_acc_name': new_acc_name})
+        if (self.c.fetchone()):
+            print('There\'s already an account called `{}` in the Database! Aborting!'.format(new_acc_name))
+            sys.exit(1)
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
         if (self.c.fetchone() != None):
             self.c.execute("UPDATE accounts SET acc_name=:new_acc_name WHERE acc_name=:acc_name", {'acc_name': acc_name, 'new_acc_name': new_acc_name})
@@ -61,9 +63,13 @@ class AccountHelper:
     def list_accounts(self):
         """Lists all accounts"""
         self.c.execute("SELECT * FROM accounts")
-        print('Listing all accounts:')
-        for acc in self.c.fetchall():
-            print('Account `{}` with number `{}` has a balance of `{}`'.format(acc[2], acc[1], acc[3]))
+        accounts = self.c.fetchall()
+        if not accounts:
+            print('There are currently no accounts!')
+        else:
+            print('Listing all accounts:')
+            for acc in accounts:
+                print('Account `{}` with number `{}` has a balance of `{}`'.format(acc[2], acc[1], acc[3]))
 
     def delete_account(self, acc_name):
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})

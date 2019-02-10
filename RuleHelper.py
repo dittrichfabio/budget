@@ -18,24 +18,22 @@ class RuleHelper:
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rules'")
         if (self.c.fetchone() == None):
             print('Creating rules table')
-            self.c.execute("""CREATE TABLE rules (rule_id integer primary key, description1 text, description2 text, account_id integer)""")
-        else:
-            print('rules table already exists')
+            self.c.execute("""CREATE TABLE rules (rule_id integer primary key, rule_name text, rule_description1 text, rule_description2 text, account_id integer)""")
         self.conn.commit()
 
-    def create_rule(self, description1, description2, acc_name):
+    def create_rule(self, rule_name, rule_description1, rule_description2, acc_name):
         """Checks if rule already exists (both descriptions). If it doesn't, creates it."""
-        self.c.execute("SELECT * FROM rules WHERE description1=:description1 and description2=:description2", {'description1': description1, 'description2': description2})
+        self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if (self.c.fetchone() != None):
-            print('Rule already in the Database! Aborting!')
+            print('There\'s already a rule called `{}` in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
 
         acc = AccountHelper()
         acc_id = acc.get_account_id(acc_name)
 
         if acc_id:
-            self.c.execute("INSERT INTO rules VALUES (NULL, :description1, :description2, :acc_id)", {'description1': description1, 'description2': description2, 'acc_id': acc_id})
-            print('Created rule: description1 = `{}`, description2 = `{}` that maps to account `{}`.'.format(description1, description2, acc_name))
+            self.c.execute("INSERT INTO rules VALUES (NULL, :rule_name, :rule_description1, :rule_description2, :acc_id)", {'rule_name': rule_name, 'rule_description1': rule_description1, 'rule_description2': rule_description2, 'acc_id': acc_id})
+            print('Created rule {}: description1 = `{}`, description2 = `{}` that maps to account `{}`.'.format(rule_name, rule_description1, rule_description2, acc_name))
         else:
             print('Account `{}` doesn\'t exist!'.format(acc_name))
             sys.exit(1)
@@ -43,46 +41,39 @@ class RuleHelper:
         self.conn.commit()
 
     def list_rules(self):
-        """Lists all accounts"""
+        """Lists all rules"""
         self.c.execute("SELECT * FROM rules")
-        print('Listing all rules:')
-        for rul in self.c.fetchall():
-            self.c.execute("SELECT accounts.acc_name FROM accounts WHERE acc_id=:acc_id", {'acc_id': rul[3]})
-            acc = self.c.fetchone()
-            print('Rule: description1 = `{}`, description2 = `{}` that maps to account `{}`'.format(rul[1], rul[2], acc[0]))
-
-
-
-
-
-    def rename_account(self, acc_name, new_acc_name):
-        """Renames an existing account (account number)"""
-        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
-        if (self.c.fetchone() != None):
-            self.c.execute("UPDATE accounts SET acc_name=:new_acc_name WHERE acc_name=:acc_name", {'acc_name': acc_name, 'new_acc_name': new_acc_name})
-            print('Renamed account `{}` to `{}`.'.format(acc_name, new_acc_name))
+        rules = self.c.fetchall()
+        if not rules:
+            print('There are currently no rules!')
         else:
-            print('Account `{}` is not in the Database! Aborting!'.format(acc_name))
+            print('Listing all rules:')
+            for rul in rules:
+                self.c.execute("SELECT accounts.acc_name FROM accounts WHERE acc_id=:acc_id", {'acc_id': rul[4]})
+                acc = self.c.fetchone()
+                print('Rule {}: rule_description1 = `{}`, rule_description2 = `{}` that maps to account `{}`'.format(rul[1], rul[2], rul[3], acc[0]))
+
+    def rename_rule(self, rule_name, new_rule_name):
+        """Renames an existing rule"""
+        self.c.execute("SELECT * FROM rules WHERE rule_name=:new_rule_name", {'new_rule_name': new_rule_name})
+        if (self.c.fetchone()):
+            print('There\'s already a rule called `{}` in the Database! Aborting!'.format(new_rule_name))
+            sys.exit(1)
+        self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
+        if (self.c.fetchone() != None):
+            self.c.execute("UPDATE rules SET rule_name=:new_rule_name WHERE rule_name=:rule_name", {'rule_name': rule_name, 'new_rule_name': new_rule_name})
+            print('Renamed rule `{}` to `{}`.'.format(rule_name, new_rule_name))
+        else:
+            print('Rule `{}` is not in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
         self.conn.commit()
 
-
-    def delete_account(self, acc_name):
-        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
+    def delete_rule(self, rule_name):
+        self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if (self.c.fetchone() != None):
-            self.c.execute("DELETE FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
-            print('Deleted account `{}`.'.format(acc_name))
+            self.c.execute("DELETE FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
+            print('Deleted rule `{}`.'.format(rule_name))
         else:
-            print('Account `{}` is not in the Database! Aborting!'.format(acc_name))
-            sys.exit(1)
-        self.conn.commit()
-
-    def set_balance(self, acc_name, new_acc_balance):
-        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
-        if (self.c.fetchone() != None):
-            self.c.execute("UPDATE accounts SET acc_balance=:new_acc_balance WHERE acc_name=:acc_name", {'new_acc_balance': new_acc_balance, 'acc_name': acc_name})
-            print('Set balance of account `{}` to `{}`.'.format(acc_name, new_acc_balance))
-        else:
-            print('Account `{}` is not in the Database! Aborting!'.format(acc_name))
+            print('Rule `{}` is not in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
         self.conn.commit()
