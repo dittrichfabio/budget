@@ -1,6 +1,8 @@
+import os
 from AccountHelper import AccountHelper
 from BudgetHelper import BudgetHelper
 from RuleHelper import RuleHelper
+from Calculate import CalculateHelper
 import click
 
 
@@ -9,6 +11,30 @@ import click
 @click.version_option()
 def cli():
     """Budget"""
+
+#BOOTSTRAP
+##################################################################
+@cli.group()
+def bootstrap():
+    """Creates accounts, budgets and rules for testing"""
+
+@bootstrap.command('run')
+def run():
+    if os.path.exists('/home/fabio/shared/Budget/db/budget.db'):
+        os.remove('/home/fabio/shared/Budget/db/budget.db')
+    acc = AccountHelper()
+    bud = BudgetHelper()
+    rul = RuleHelper()
+    acc.create_account('1', 'chequing', 'main', 1000)
+    acc.create_account('2', 'groceries', 'budget', 1000)
+    acc.create_account('3', 'fixed_expenses', 'budget', 1000)
+    acc.create_account('4', 'restaurantes', 'budget', 1000)
+    acc.create_account('5', 'mastercard', 'credit', 0)
+    bud.create_budget('groceries', 300, 'groceries')
+    bud.create_budget('restaurantes', 50, 'restaurantes')
+    bud.create_budget('videotron', 50, 'fixed_expenses')
+    rul.create_rule('videotron', 'VIDEOTRON', '', 'fixed_expenses')
+    rul.create_rule('3 Brasseurs', '3 BRASSEURS', '', 'restaurantes')
 
 #ACCOUNTS
 ##################################################################
@@ -20,9 +46,10 @@ def account():
 @click.argument('acc_number', required=True)
 @click.argument('acc_name', required=True)
 @click.argument('acc_balance', required=True)
-def create_account(acc_number, acc_name, acc_balance):
+@click.argument('acc_type', required=True)
+def create_account(acc_number, acc_name, acc_balance, acc_type):
     acc = AccountHelper()
-    acc.create_account(acc_number, acc_name, acc_balance)
+    acc.create_account(acc_number, acc_name, acc_balance, acc_type)
 
 @account.command('list')
 def list_accounts():
@@ -47,7 +74,10 @@ def delete_account(acc_name):
 @click.argument('new_acc_balance')
 def set_balance(acc_name, new_acc_balance):
     acc = AccountHelper()
-    acc.set_balance(acc_name, new_acc_balance)
+    if acc.set_balance(acc_name, new_acc_balance):
+        print('Set balance of account `{}` to `{}`.'.format(acc_name, new_acc_balance))
+    else:
+        print('Account `{}` is not in the Database! Aborting!'.format(acc_name))
 
 #@account.command('get_account_id')
 #@click.argument('acc_name')
@@ -66,15 +96,22 @@ def rule():
 @click.argument('name', required=True)
 @click.argument('description1', required=True)
 @click.argument('description2', required=True)
-@click.argument('acc_name', required=True)
-def create_rule(name, description1, description2, acc_name):
+@click.argument('budget', required=True)
+def create_rule(name, description1, description2, budget):
     rul = RuleHelper()
-    rul.create_rule(name, description1, description2, acc_name)
+    rul.create_rule(name, description1, description2, budget)
 
 @rule.command('list')
 def list_rules():
     rul = RuleHelper()
-    rul.list_rules()
+    rules = rul.list_rules()
+    if rules:
+        print('Listing all rules:')
+        for rule in rules:
+                print('Rule `{}`: rule_description1 = `{}`, rule_description2 = `{}` that maps to budget `{}`'.format(rule[0], rule[1], rule[2], rule[3]))
+    else:
+        print('There are currently no rules!')
+
 
 @rule.command('rename')
 @click.argument('rule_name', required=True)
@@ -107,8 +144,14 @@ def create_budget(budget_name, budget_value, acc_name):
 @budget.command('list')
 def list_budgets():
     bud = BudgetHelper()
-    bud.list_budget()
-    
+    budgets = bud.list_budgets()
+    if budgets:
+        print('Listing all budgets:')
+        for budget in budgets:
+            print('Budget `{}` of value {} maps to account `{}`'.format(budget[0], budget[1], budget[2]))
+    else:
+        print('There are currently no budgets!')
+
 @budget.command('rename')
 @click.argument('budget_name', required=True)
 @click.argument('new_budget_name', required=True)
@@ -135,4 +178,18 @@ def change_budget_value(budget_name, new_budget_value):
 def change_budget_value(budget_name, new_budget_account):
     bud = BudgetHelper()
     bud.change_budget_account(budget_name, new_budget_account)
+##################################################################
+
+#EXECUTE
+##################################################################
+@cli.group()
+def calculate():
+    """Calculate budget"""
+
+@calculate.command('load_csv')
+@click.argument('csv_file', required=True)
+def load_csv(csv_file):
+    cal = CalculateHelper()
+    cal.load_csv(csv_file)
+
 ##################################################################

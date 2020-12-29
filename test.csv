@@ -1,0 +1,8 @@
+"Account Type","Account Number","Transaction Date","Cheque Number","Description 1","Description 2","CAD$","USD$"
+Chequing,1,4/30/2018,,"Transfer","WWW TRANSFER - 4037 ",36.08,,
+Chequing,1,5/1/2018,,"HYDRO BILL PMT","HYDRO-QUEBEC ",-51.65,,
+Chequing,1,5/3/2018,,"PAYROLL DEPOSIT","MCGILL ",1189.54,,
+Chequing,1,5/4/2018,,"PAYROLL DEPOSIT","NUANCE COMMNICA ",1562.42,,
+MasterCard,5,5/14/2018,,"VIDEOTRON S.E.N.C. 110 MONTREAL QC",,-229.97,,
+MasterCard,5,5/14/2018,,"PROVIGO MONA TURBIDE MONTREAL QC",,-7.61,,
+MasterCard,5,5/17/2018,,"LES 3 BRASSEURS MCGILL MONTREAL QC",,-15.21,,

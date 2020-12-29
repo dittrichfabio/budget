@@ -16,7 +16,7 @@ class AccountHelper:
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='accounts'")
         if (self.c.fetchone() == None):
-            self.c.execute("""CREATE TABLE accounts (acc_id integer primary key, acc_number text, acc_name text, acc_balance integer)""")
+            self.c.execute("""CREATE TABLE accounts (acc_id integer primary key, acc_number text, acc_name text, acc_type text, acc_balance integer)""")
         self.conn.commit()
 
     def get_account_id(self, acc_name):
@@ -27,7 +27,7 @@ class AccountHelper:
         else:
             return acc_id[0]
 
-    def create_account(self, acc_number, acc_name, acc_balance):
+    def create_account(self, acc_number, acc_name, acc_type, acc_balance):
         """Checks if account already exists (account number). If it doesn't, creates it."""
         self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         if (self.c.fetchone() != None):
@@ -39,8 +39,19 @@ class AccountHelper:
             print('There\'s already an account called `{}` in the Database! Aborting!'.format(acc_name))
             sys.exit(1)
 
-        self.c.execute("INSERT INTO accounts VALUES (NULL, :acc_number, :acc_name, :acc_balance)", {'acc_number': acc_number, 'acc_name': acc_name, 'acc_balance': acc_balance})
-        print('Created account `{}` with the account number `{}` and balance `{}`.'.format(acc_name, acc_number, acc_balance))
+        ACC_TYPES = ['main', 'budget', 'credit']
+        if acc_type not in ACC_TYPES:
+            print('Account of type `{}` should be one of `{}`! Aborting!'.format(acc_type, ACC_TYPES))
+            sys.exit(1)
+
+        if acc_type == 'main':
+            self.c.execute("SELECT * FROM accounts WHERE acc_type=:acc_type", {'acc_type': acc_type})
+            if (self.c.fetchone() != None):
+                print('There\'s already an account of type `{}` in the Database! Aborting!'.format(acc_type))
+                sys.exit(1)
+
+        self.c.execute("INSERT INTO accounts VALUES (NULL, :acc_number, :acc_name, :acc_type, :acc_balance)", {'acc_number': acc_number, 'acc_name': acc_name, 'acc_type':acc_type, 'acc_balance': acc_balance})
+        print('Created account `{}` with the account number `{}` of type `{}` and balance `{}`.'.format(acc_name, acc_number, acc_type, acc_balance))
 
         self.conn.commit()
 
@@ -68,7 +79,7 @@ class AccountHelper:
         else:
             print('Listing all accounts:')
             for acc in accounts:
-                print('Account `{}` with number `{}` has a balance of `{}`'.format(acc[2], acc[1], acc[3]))
+                print('Account `{}` with number `{}` of type `{}` has a balance of `{}`'.format(acc[2], acc[1], acc[3], acc[4]))
 
     def delete_account(self, acc_name):
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
@@ -84,8 +95,16 @@ class AccountHelper:
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
         if (self.c.fetchone() != None):
             self.c.execute("UPDATE accounts SET acc_balance=:new_acc_balance WHERE acc_name=:acc_name", {'new_acc_balance': new_acc_balance, 'acc_name': acc_name})
-            print('Set balance of account `{}` to `{}`.'.format(acc_name, new_acc_balance))
+            self.conn.commit()
+            return True
         else:
-            print('Account `{}` is not in the Database! Aborting!'.format(acc_name))
-            sys.exit(1)
+            return False
+        
+
+    def increase_balance_by(self, acc_name, value):
+        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
+        account = self.c.fetchone()
+        if (account != None):
+            new_acc_balance = int(account[4]) + value
+            self.c.execute("UPDATE accounts SET acc_balance=:new_acc_balance WHERE acc_name=:acc_name", {'new_acc_balance': new_acc_balance, 'acc_name': acc_name})
         self.conn.commit()

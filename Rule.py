@@ -1,10 +1,10 @@
 class Rule:
 
-    def __init__(self, rule_name, rule_description1, rule_description2, rule_account):
+    def __init__(self, rule_name, rule_description1, rule_description2, rule_budget):
         self.rule_name = rule_name
         self.rule_description1 = rule_description1
         self.rule_description2 = rule_description2
-        self.rule_account = rule_account
+        self.rule_budget = rule_budget
 
     
     def get_rule_name():
@@ -16,5 +16,5 @@ class Rule:
     def get_rule_description2():
         return self.rule_description2
 
-    def get_rule_account():
-        return self.rule_account
+    def get_rule_budget():
+        return self.rule_budget

@@ -40,18 +40,23 @@ class BudgetHelper:
 
         self.conn.commit()
 
-    def list_budget(self):
+    def list_budgets(self):
         """Lists all budgets"""
         self.c.execute("SELECT * FROM budget")
         budgets = self.c.fetchall()
         if not budgets:
-            print('There are currently no budgets!')
+            #print('There are currently no budgets!')
+            return None
         else:
-            print('Listing all budgets:')
+            #print('Listing all budgets:')
+            budget_list = []
             for bud in budgets:
                 self.c.execute("SELECT accounts.acc_name FROM accounts WHERE acc_id=:acc_id", {'acc_id': bud[3]})
                 acc = self.c.fetchone()
-                print('Budget `{}` of value {} maps to account `{}`'.format(bud[1], bud[2], acc[0]))
+                #print('Budget `{}` of value {} maps to account `{}`'.format(bud[1], bud[2], acc[0]))
+                budget_list.append([bud[1], bud[2], acc[0]])
+            return budget_list
+
 
     def rename_budget(self, budget_name, new_budget_name):
         """Renames an existing budget"""
