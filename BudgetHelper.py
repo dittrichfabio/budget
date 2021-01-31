@@ -29,16 +29,17 @@ class BudgetHelper:
             sys.exit(1)
 
         acc = AccountHelper()
-        acc_id = acc.get_account_id(acc_name)
+        acc_id = acc.get_id(acc_name)
 
         if acc_id:
             self.c.execute("INSERT INTO budget VALUES (NULL, :budget_name, :budget_value, :acc_id)", {'budget_value': budget_value, 'budget_name': budget_name, 'acc_id': acc_id})
-            print('Created budget `{}` for {} associated to account `{}`:'.format(budget_name, budget_value, acc_name))
+            print('Created budget `{}` for {} associated to account `{}`.'.format(budget_name, budget_value, acc_name))
+            self.conn.commit()
+            acc.associate_budget(acc_name, budget_name)
         else:
             print('Account `{}` doesn\'t exist!'.format(acc_name))
             sys.exit(1)
 
-        self.conn.commit()
 
     def list_budgets(self):
         """Lists all budgets"""
@@ -97,7 +98,7 @@ class BudgetHelper:
         self.c.execute("SELECT * FROM budget WHERE budget_name=:budget_name", {'budget_name': budget_name})
         if (self.c.fetchone() != None):
             acc = AccountHelper()
-            acc_id = acc.get_account_id(new_budget_acc)
+            acc_id = acc.get_id(new_budget_acc)
             self.c.execute("UPDATE budget SET account_id=:acc_id WHERE budget_name=:budget_name", {'acc_id': acc_id, 'budget_name': budget_name})
             print('Set budget `{}` to account `{}`.'.format(budget_name, new_budget_acc))
         else:

@@ -20,21 +20,21 @@ def bootstrap():
 
 @bootstrap.command('run')
 def run():
-    if os.path.exists('/home/fabio/shared/Budget/db/budget.db'):
-        os.remove('/home/fabio/shared/Budget/db/budget.db')
+    if os.path.exists('/mnt/c/Users/fabio_dittrich/Documents/Budget/db/budget.db'):
+        os.remove('/mnt/c/Users/fabio_dittrich/Documents/Budget/db/budget.db')
     acc = AccountHelper()
-    bud = BudgetHelper()
-    rul = RuleHelper()
-    acc.create_account('1', 'chequing', 'main', 1000)
-    acc.create_account('2', 'groceries', 'budget', 1000)
-    acc.create_account('3', 'fixed_expenses', 'budget', 1000)
-    acc.create_account('4', 'restaurantes', 'budget', 1000)
-    acc.create_account('5', 'mastercard', 'credit', 0)
-    bud.create_budget('groceries', 300, 'groceries')
-    bud.create_budget('restaurantes', 50, 'restaurantes')
-    bud.create_budget('videotron', 50, 'fixed_expenses')
-    rul.create_rule('videotron', 'VIDEOTRON', '', 'fixed_expenses')
-    rul.create_rule('3 Brasseurs', '3 BRASSEURS', '', 'restaurantes')
+    #bud = BudgetHelper()
+    #rul = RuleHelper()
+    #acc.create('1', 'chequing', 'main', 1000)
+    #acc.create('2', 'groceries', 'budget', 1000)
+    #acc.create('3', 'fixed_expenses', 'budget', 1000)
+    #acc.create('4', 'restaurantes', 'budget', 1000)
+    #acc.create('5', 'mastercard', 'credit', 0)
+    #bud.create_budget('groceries', 300, 'groceries')
+    #bud.create_budget('restaurantes', 50, 'restaurantes')
+    #bud.create_budget('videotron', 50, 'fixed_expenses')
+    #rul.create_rule('videotron', 'VIDEOTRON', '', 'fixed_expenses')
+    #rul.create_rule('3 Brasseurs', '3 BRASSEURS', '', 'restaurantes')
 
 #ACCOUNTS
 ##################################################################
@@ -46,28 +46,27 @@ def account():
 @click.argument('acc_number', required=True)
 @click.argument('acc_name', required=True)
 @click.argument('acc_balance', required=True)
-@click.argument('acc_type', required=True)
-def create_account(acc_number, acc_name, acc_balance, acc_type):
+def create_account(acc_number, acc_name, acc_balance):
     acc = AccountHelper()
-    acc.create_account(acc_number, acc_name, acc_balance, acc_type)
+    acc.create(acc_number, acc_name, acc_balance)
 
 @account.command('list')
 def list_accounts():
     acc = AccountHelper()
-    acc.list_accounts()
+    acc.itemize()
 
 @account.command('rename')
 @click.argument('acc_name', required=True)
 @click.argument('new_acc_name', required=True)
 def rename_account(acc_name, new_acc_name):
     acc = AccountHelper()
-    acc.rename_account(acc_name, new_acc_name)
+    acc.rename(acc_name, new_acc_name)
 
 @account.command('delete')
 @click.argument('acc_name', required=True)
 def delete_account(acc_name):
     acc = AccountHelper()
-    acc.delete_account(acc_name)
+    acc.delete(acc_name)
 
 @account.command('set_balance')
 @click.argument('acc_name')
@@ -79,11 +78,18 @@ def set_balance(acc_name, new_acc_balance):
     else:
         print('Account `{}` is not in the Database! Aborting!'.format(acc_name))
 
+#@account.command('associate_budget')
+#@click.argument('acc_name')
+#@click.argument('budget_name')
+def associate_budget(acc_name, budget_name):
+    acc = AccountHelper()
+    acc.associate_budget(acc_name, budget_name)
+
 #@account.command('get_account_id')
 #@click.argument('acc_name')
 def get_account_id(acc_name):
     acc = AccountHelper()
-    print(acc.get_account_id(acc_name))
+    print(acc.get_id(acc_name))
 ##################################################################
 
 #RULE

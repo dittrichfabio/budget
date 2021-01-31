@@ -1,20 +1,20 @@
 class Account:
 
-    def __init__(self, acc_number, acc_name, acc_balance, acc_type):
-        self.acc_number = acc_number
-        self.acc_name = acc_name
-        self.acc_balance = acc_balance
-        self.acc_type = acc_type
+    def __init__(self, acc_number, acc_name, acc_balance, associated_bugdgets):
+        self.number = acc_number
+        self.name = acc_name
+        self.balance = acc_balance
+        self.associated_bugdgets = associated_bugdgets
 
-    
-    def get_acc_number():
-        return self.acc_number
 
-    def get_acc_name():
-        return self.acc_name
+    def get_number():
+        return self.number
 
-    def get_acc_balance():
-        return self.acc_balance
-    
-    def get_acc_type():
-        return self.acc_type
+    def get_name():
+        return self.name
+
+    def get_balance():
+        return self.balance
+
+    def get_associated_bugdgets():
+        return self.associated_bugdgets
