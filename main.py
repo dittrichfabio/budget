@@ -23,18 +23,16 @@ def run():
     if os.path.exists('/mnt/c/Users/fabio_dittrich/Documents/Budget/db/budget.db'):
         os.remove('/mnt/c/Users/fabio_dittrich/Documents/Budget/db/budget.db')
     acc = AccountHelper()
-    #bud = BudgetHelper()
-    #rul = RuleHelper()
-    #acc.create('1', 'chequing', 'main', 1000)
-    #acc.create('2', 'groceries', 'budget', 1000)
-    #acc.create('3', 'fixed_expenses', 'budget', 1000)
-    #acc.create('4', 'restaurantes', 'budget', 1000)
-    #acc.create('5', 'mastercard', 'credit', 0)
-    #bud.create_budget('groceries', 300, 'groceries')
-    #bud.create_budget('restaurantes', 50, 'restaurantes')
-    #bud.create_budget('videotron', 50, 'fixed_expenses')
-    #rul.create_rule('videotron', 'VIDEOTRON', '', 'fixed_expenses')
-    #rul.create_rule('3 Brasseurs', '3 BRASSEURS', '', 'restaurantes')
+    bud = BudgetHelper()
+    rul = RuleHelper()
+    acc.create('1', 'chequing', 1000)
+    acc.create('2', 'groceries', 1000)
+    acc.create('3', 'fixed_expenses', 1000)
+    bud.create_budget('groceries', 300, 'groceries', 0)
+    bud.create_budget('condo', 50, 'fixed_expenses', 0)
+    bud.create_budget('internet', 50, 'fixed_expenses', 0)
+    rul.create_rule('internet', 'VIDEOTRON', '', 'internet')
+    rul.create_rule('condo', 'Condo Fee', '', 'condo')
 
 #ACCOUNTS
 ##################################################################
@@ -154,7 +152,7 @@ def list_budgets():
     if budgets:
         print('Listing all budgets:')
         for budget in budgets:
-            print('Budget `{}` of value {} maps to account `{}`'.format(budget[0], budget[1], budget[2]))
+            print('Budget `{}` of value {} maps to account `{}` and has a balance of `{}`'.format(budget[0], budget[1], budget[2], budget[3]))
     else:
         print('There are currently no budgets!')
 
@@ -177,6 +175,13 @@ def delete_budget(budget_name):
 def change_budget_value(budget_name, new_budget_value):
     bud = BudgetHelper()
     bud.change_budget_value(budget_name, new_budget_value)
+
+@budget.command('change_balance')
+@click.argument('budget_name', required=True)
+@click.argument('new_budget_balance', required=True)
+def change_budget_balance(budget_name, new_budget_balance):
+    bud = BudgetHelper()
+    bud.change_budget_balance(budget_name, new_budget_balance)
 
 @budget.command('change_account')
 @click.argument('budget_name', required=True)

@@ -67,6 +67,7 @@ class AccountHelper:
         accounts = self.c.fetchall()
         if not accounts:
             print('There are currently no accounts!')
+            return False
         else:
             print('Listing all accounts:')
             for acc in accounts:
@@ -74,6 +75,7 @@ class AccountHelper:
                     print('Account `{}` with number `{}` has a balance of `{}` and it\'s associated to the budget(s) `{}`'.format(acc[2], acc[1], acc[3], ', '.join(json.loads(acc[4]))))
                 else:
                     print('Account `{}` with number `{}` has a balance of `{}` and it hasn\'t been associated to any budgets'.format(acc[2], acc[1], acc[3]))
+            return accounts
 
     def delete(self, acc_name):
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
