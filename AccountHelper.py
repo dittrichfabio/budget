@@ -1,8 +1,6 @@
-
+import csv
 import sys
-import json
 import sqlite3
-import Account
 
 
 
@@ -18,8 +16,12 @@ class AccountHelper:
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='accounts'")
         if (self.c.fetchone() == None):
-            self.c.execute("""CREATE TABLE accounts (acc_id integer primary key, acc_number text, acc_name text, acc_balance float, acc_associated_budgets text)""")
+            self.c.execute("""CREATE TABLE accounts (acc_id integer primary key, acc_number text, acc_name text, acc_balance float)""")
         self.conn.commit()
+
+    def get_account(self, acc_number):
+        self.c.execute("SELECT accounts.acc_id FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
+        return self.c.fetchone()
 
     def get_id(self, acc_name):
         self.c.execute("SELECT accounts.acc_id FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
@@ -28,6 +30,53 @@ class AccountHelper:
             return None
         else:
             return acc_id[0]
+
+    def save_csv(self, account_file):
+        header = ["Account Number", "Account Name", "Account Balance"]
+        accounts = self.itemize()
+        with open(account_file, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(header)
+            writer.writerows(accounts)
+
+    def load_csv(self, account_file):
+        with open(account_file, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            data = list(reader)
+        new_accounts = [line for line in data]
+        new_accounts.pop(0)
+
+        accounts = self.itemize()
+        if accounts:
+            account_numbers = [b[0] for b in accounts]
+
+        self.itemize()
+        print('\n')
+        for na in new_accounts:
+            if int(na[0]) in account_numbers: #changing an existing account
+                account_numbers.remove(int(na[0]))
+                self.update_account(na[0], na[1], na[2])
+            else: #adding a new account
+                self.create(na[0], na[1], na[2])
+            self.itemize()
+            print('\n')
+
+
+        if account_numbers: #there are accounts to be deleted
+            for acc_number in account_numbers:
+                self.delete(acc_number)
+        self.itemize()
+
+    
+    def update_account(self, acc_number, new_acc_name, new_acc_balance):
+        new_acc_balance = float(new_acc_balance)
+        
+        self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
+        _, acc_number, acc_name, acc_balance = self.c.fetchone()
+        if new_acc_name != acc_name:
+            self.rename(acc_name, new_acc_name)
+        if acc_balance != new_acc_balance:
+            self.set_balance(new_acc_name, new_acc_balance)
 
     def create(self, acc_number, acc_name, acc_balance):
         """Checks if account already exists (account number and name). If it doesn't, creates it."""
@@ -41,7 +90,7 @@ class AccountHelper:
             print('There\'s already an account called `{}` in the Database! Aborting!'.format(acc_name))
             sys.exit(1)
 
-        self.c.execute("INSERT INTO accounts VALUES (NULL, :acc_number, :acc_name, :acc_balance, :acc_associated_budgets)", {'acc_number': acc_number, 'acc_name': acc_name, 'acc_balance': acc_balance, 'acc_associated_budgets': '[]'})
+        self.c.execute("INSERT INTO accounts VALUES (NULL, :acc_number, :acc_name, :acc_balance)", {'acc_number': acc_number, 'acc_name': acc_name, 'acc_balance': acc_balance})
         print('Created account `{}` with the account number `{}` with a balance of `{}`.'.format(acc_name, acc_number, acc_balance))
 
         self.conn.commit()
@@ -65,62 +114,40 @@ class AccountHelper:
         """Lists all accounts"""
         self.c.execute("SELECT * FROM accounts")
         accounts = self.c.fetchall()
+        field_names = [i[0] for i in self.c.description]
         if not accounts:
             print('There are currently no accounts!')
             return False
         else:
             print('Listing all accounts:')
+            print(field_names)
             for acc in accounts:
-                if json.loads(acc[4]):
-                    print('Account `{}` with number `{}` has a balance of `{}` and it\'s associated to the budget(s) `{}`'.format(acc[2], acc[1], acc[3], ', '.join(json.loads(acc[4]))))
-                else:
-                    print('Account `{}` with number `{}` has a balance of `{}` and it hasn\'t been associated to any budgets'.format(acc[2], acc[1], acc[3]))
-            return accounts
+                print('Account `{}` with number `{}` has a balance of `{}`'.format(acc[2], acc[1], acc[3]))
+            return [[acc[1], acc[2], acc[3]] for acc in accounts]
 
-    def delete(self, acc_name):
-        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
+    def delete(self, acc_number):
+        self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         if (self.c.fetchone() != None):
-            self.c.execute("DELETE FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
-            print('Deleted account `{}`.'.format(acc_name))
+            self.c.execute("DELETE FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
+            print('Deleted account `{}`.'.format(acc_number))
         else:
-            print('Account `{}` is not in the Database! Aborting!'.format(acc_name))
+            print('Account `{}` is not in the Database! Aborting!'.format(acc_number))
             sys.exit(1)
         self.conn.commit()
 
-    def set_balance(self, acc_name, new_acc_balance):
-        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
+    def set_balance(self, acc_number, new_acc_balance):
+        self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         if (self.c.fetchone() != None):
-            self.c.execute("UPDATE accounts SET acc_balance=:new_acc_balance WHERE acc_name=:acc_name", {'new_acc_balance': new_acc_balance, 'acc_name': acc_name})
+            self.c.execute("UPDATE accounts SET acc_balance=:new_acc_balance WHERE acc_number=:acc_number", {'new_acc_balance': new_acc_balance, 'acc_number': acc_number})
             self.conn.commit()
             return True
         else:
             return False
         
-    def increase_balance_by(self, acc_name, value):
-        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
+    def increase_balance_by(self, acc_number, value):
+        self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         account = self.c.fetchone()
         if (account != None):
             new_acc_balance = int(account[4]) + value
-            self.c.execute("UPDATE accounts SET acc_balance=:new_acc_balance WHERE acc_name=:acc_name", {'new_acc_balance': new_acc_balance, 'acc_name': acc_name})
+            self.c.execute("UPDATE accounts SET acc_balance=:new_acc_balance WHERE acc_number=:acc_number", {'new_acc_balance': new_acc_balance, 'acc_number': acc_number})
         self.conn.commit()
-
-    def associate_budget(self, acc_name, budget_name):
-        #self.c.execute("SELECT * FROM budget WHERE budget_name=:budget_name", {'budget_name': budget_name})
-        #if (self.c.fetchone() == None):
-        #    print('There\'s no budget with name `{}` in the Database! Aborting!'.format(budget_name))
-        #    sys.exit(1)
-
-        self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
-        account = self.c.fetchone()
-        if (account == None):
-            print('There\'s no account with name `{}` in the Database! Aborting!'.format(acc_name))
-            sys.exit(1)
-        else:
-            current_budgets = json.loads(account[4])
-            if budget_name in current_budgets:
-                print('Budget {} is already associated to account {}! Aborting!'.format(budget_name, acc_name))
-                sys.exit(1)
-            current_budgets.append(budget_name)
-            current_budgets_string = json.dumps(current_budgets)
-            self.c.execute("UPDATE accounts SET acc_associated_budgets=:new_associated_budgets WHERE acc_name=:acc_name", {'new_associated_budgets': current_budgets_string, 'acc_name': acc_name})
-            self.conn.commit()

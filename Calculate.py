@@ -25,7 +25,7 @@ class CalculateHelper:
         filtered_data.pop(0)
 
         r = RuleHelper()
-        rules = r.list_rules()
+        rules = r.itemize()
 
         resolved_list = []
         unresolved_list = []
@@ -98,7 +98,7 @@ class CalculateHelper:
 
     def get_manual_input(self, unresolved_list):
         bud = BudgetHelper()
-        budgets = bud.list_budgets()
+        budgets = bud.itemize()
         budgets = [i[0] for i in budgets]
         print(budgets)
         expenses_by_budget = {}
@@ -116,7 +116,7 @@ class CalculateHelper:
     def apply_budget(self):
         acc = AccountHelper()
         bud = BudgetHelper()
-        budgets = bud.list_budgets()
+        budgets = bud.itemize()
         for bname, bvalue, bacc in budgets:
             acc.increase_balance_by(bacc, bvalue)
             
