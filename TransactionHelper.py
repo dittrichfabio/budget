@@ -1,6 +1,5 @@
 import sqlite3
 from datetime import datetime
-import Transaction
 
 class TransactionHelper:
     FORMAT = "%m/%d/%Y"

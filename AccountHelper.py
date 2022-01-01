@@ -47,26 +47,25 @@ class AccountHelper:
         new_accounts.pop(0)
 
         accounts = self.itemize()
+        account_numbers = []
         if accounts:
             account_numbers = [b[0] for b in accounts]
 
-        self.itemize()
-        print('\n')
         for na in new_accounts:
+            if na[0].startswith("#"):
+                continue
+            if len(na) != 3:
+                print('Error! Missing argument in line "{}"'.format(na))
+                sys.exit(1)
             if int(na[0]) in account_numbers: #changing an existing account
                 account_numbers.remove(int(na[0]))
                 self.update_account(na[0], na[1], na[2])
             else: #adding a new account
                 self.create(na[0], na[1], na[2])
-            self.itemize()
-            print('\n')
-
 
         if account_numbers: #there are accounts to be deleted
             for acc_number in account_numbers:
                 self.delete(acc_number)
-        self.itemize()
-
     
     def update_account(self, acc_number, new_acc_name, new_acc_balance):
         new_acc_balance = float(new_acc_balance)
@@ -119,17 +118,17 @@ class AccountHelper:
             print('There are currently no accounts!')
             return False
         else:
-            print('Listing all accounts:')
-            print(field_names)
-            for acc in accounts:
-                print('Account `{}` with number `{}` has a balance of `{}`'.format(acc[2], acc[1], acc[3]))
+            #print('Listing all accounts:')
+            #print(field_names)
+            #for acc in accounts:
+            #    print('Account `{}` with number `{}` has a balance of `{}`'.format(acc[2], acc[1], acc[3]))
             return [[acc[1], acc[2], acc[3]] for acc in accounts]
 
     def delete(self, acc_number):
         self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         if (self.c.fetchone() != None):
             self.c.execute("DELETE FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
-            print('Deleted account `{}`.'.format(acc_number))
+            #print('Deleted account `{}`.'.format(acc_number))
         else:
             print('Account `{}` is not in the Database! Aborting!'.format(acc_number))
             sys.exit(1)

@@ -36,24 +36,25 @@ class RuleHelper:
         new_rules.pop(0)
 
         rules = self.itemize()
+        rules_names = []
         if rules:
             rules_names = [b[0] for b in rules]
 
-        self.itemize()
-        print('\n')
         for nr in new_rules:
+            if nr[0].startswith("#"):
+                continue
+            if len(nr) != 4:
+                print('Error! Missing argument in line "{}"'.format(nr))
+                sys.exit(1)
             if nr[0] in rules_names: #changing an existing rules
                 rules_names.remove(nr[0])
                 self.update_rule(*nr)
             else: #adding a new rule
                 self.create(*nr)
-            self.itemize()
-            print('\n')
 
         if rules_names: #there are accounts to be deleted
             for rule_name in rules_names:
                 self.delete(rule_name)
-        self.itemize()
     
     def update_rule(self, rule_name, new_desc1, new_desc2, new_budget):
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
@@ -78,7 +79,7 @@ class RuleHelper:
 
         if rule_budget in budgets:
             self.c.execute("INSERT INTO rules VALUES (NULL, :rule_name, :rule_description1, :rule_description2, :rule_budget)", {'rule_name': rule_name, 'rule_description1': rule_description1, 'rule_description2': rule_description2, 'rule_budget': rule_budget})
-            print('Created rule {}: description1 = `{}`, description2 = `{}` that maps to budget `{}`.'.format(rule_name, rule_description1, rule_description2, rule_budget))
+            #print('Created rule {}: description1 = `{}`, description2 = `{}` that maps to budget `{}`.'.format(rule_name, rule_description1, rule_description2, rule_budget))
         else:
             print('Budget `{}` doesn\'t exist!'.format(rule_budget))
             sys.exit(1)
@@ -123,7 +124,6 @@ class RuleHelper:
             rule_list = []
             for rul in rules:
                 rule_list.append([rul[1], rul[2], rul[3], rul[4]])
-                print(rul)
             return rule_list
 
     def rename(self, rule_name, new_rule_name):
@@ -135,7 +135,7 @@ class RuleHelper:
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if (self.c.fetchone() != None):
             self.c.execute("UPDATE rules SET rule_name=:new_rule_name WHERE rule_name=:rule_name", {'rule_name': rule_name, 'new_rule_name': new_rule_name})
-            print('Renamed rule `{}` to `{}`.'.format(rule_name, new_rule_name))
+            #print('Renamed rule `{}` to `{}`.'.format(rule_name, new_rule_name))
         else:
             print('Rule `{}` is not in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
@@ -145,7 +145,7 @@ class RuleHelper:
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if (self.c.fetchone() != None):
             self.c.execute("DELETE FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
-            print('Deleted rule `{}`.'.format(rule_name))
+            #print('Deleted rule `{}`.'.format(rule_name))
         else:
             print('Rule `{}` is not in the Database! Aborting!'.format(rule_name))
             sys.exit(1)

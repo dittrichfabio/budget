@@ -26,38 +26,40 @@ def run():
     acc = AccountHelper()
     bud = BudgetHelper()
     rul = RuleHelper()
-    TransactionHelper().create('08/22/2021', 'desc11', 'MARI' , -33.33, 'groceries')
-    TransactionHelper().create('09/22/2021', 'FIZZ', 'MARI' , -34.34, 'condo')
-    TransactionHelper().create('10/22/2021', 'desc12', 'desc22' , -35.35, 'groceries')
-    TransactionHelper().create('11/22/2021', 'FIZZ', 'FABIO' , -36.36, 'condo')
-    TransactionHelper().create('12/22/2021', 'FIZZ', 'MARI' , -37.37, 'groceries')
-    TransactionHelper().create('12/23/2021', 'MARI', 'FIZZ' , -38.38, 'internet')
-    TransactionHelper().itemize(begin='', end='')
-    TransactionHelper().itemize(begin='10/22/2021', end='')
-    TransactionHelper().itemize(begin='', end='09/22/2021')
-    TransactionHelper().itemize(begin='10/22/2021', end='11/22/2021')
-    TransactionHelper().itemize(desc1="FABIO")
-    TransactionHelper().itemize(desc1="FIZZ")
-    TransactionHelper().itemize(desc1="FIZZ", desc2="MARI")
-    TransactionHelper().itemize(desc1="FIZZ", desc2="MARI", begin="10/22/2021")
-    TransactionHelper().itemize(anydesc='MARI')
-    TransactionHelper().itemize(budget='groceriesa')
-    TransactionHelper().itemize(budget='groceries')
-    TransactionHelper().itemize(begin='10/22/2021', end='', budget='groceries')
-    TransactionHelper().itemize(anydesc='MARI', budget='groceries')
-    TransactionHelper().itemize(desc1="FIZZ", desc2="MARI", budget='groceries')
-    TransactionHelper().itemize(desc1="FIZZ", desc2="MARI", begin="10/22/2021", budget='groceries')
 
-
-    acc.create('1', 'chequing', 1000)
-    acc.create('2', 'groceries', 1000)
-    acc.create('3', 'fixed_expenses', 1000)
-    bud.create('groceries', 300, 'groceries', 0)
-    bud.create('condo', 50, 'fixed_expenses', 0)
-    bud.create('internet', 50, 'fixed_expenses', 0)
-    rul.create('internet', 'VIDEOTRON', '', 'internet')
-    rul.create('condo', 'Condo Fee', '', 'condo')
-    rul.create('groceries', 'PROVIGO', '', 'groceries')
+    acc.load_csv("CSVs/accounts.csv")
+    bud.load_csv("CSVs/budgets.csv")
+    rul.load_csv("CSVs/rules.csv")
+    #TransactionHelper().create('08/22/2021', 'desc11', 'MARI' , -33.33, 'groceries')
+    #TransactionHelper().create('09/22/2021', 'FIZZ', 'MARI' , -34.34, 'condo')
+    #TransactionHelper().create('10/22/2021', 'desc12', 'desc22' , -35.35, 'groceries')
+    #TransactionHelper().create('11/22/2021', 'FIZZ', 'FABIO' , -36.36, 'condo')
+    #TransactionHelper().create('12/22/2021', 'FIZZ', 'MARI' , -37.37, 'groceries')
+    #TransactionHelper().create('12/23/2021', 'MARI', 'FIZZ' , -38.38, 'internet')
+    #TransactionHelper().itemize(begin='', end='')
+    #TransactionHelper().itemize(begin='10/22/2021', end='')
+    #TransactionHelper().itemize(begin='', end='09/22/2021')
+    #TransactionHelper().itemize(begin='10/22/2021', end='11/22/2021')
+    #TransactionHelper().itemize(desc1="FABIO")
+    #TransactionHelper().itemize(desc1="FIZZ")
+    #TransactionHelper().itemize(desc1="FIZZ", desc2="MARI")
+    #TransactionHelper().itemize(desc1="FIZZ", desc2="MARI", begin="10/22/2021")
+    #TransactionHelper().itemize(anydesc='MARI')
+    #TransactionHelper().itemize(budget='groceriesa')
+    #TransactionHelper().itemize(budget='groceries')
+    #TransactionHelper().itemize(begin='10/22/2021', end='', budget='groceries')
+    #TransactionHelper().itemize(anydesc='MARI', budget='groceries')
+    #TransactionHelper().itemize(desc1="FIZZ", desc2="MARI", budget='groceries')
+    #TransactionHelper().itemize(desc1="FIZZ", desc2="MARI", begin="10/22/2021", budget='groceries')
+    #acc.create('1', 'chequing', 1000)
+    #acc.create('2', 'groceries', 1000)
+    #acc.create('3', 'fixed_expenses', 1000)
+    #bud.create('groceries', 300, 'groceries', 0)
+    #bud.create('condo', 50, 'fixed_expenses', 0)
+    #bud.create('internet', 50, 'fixed_expenses', 0)
+    #rul.create('internet', 'VIDEOTRON', '', 'internet')
+    #rul.create('condo', 'Condo Fee', '', 'condo')
+    #rul.create('groceries', 'PROVIGO', '', 'groceries')
 
 #ACCOUNTS
 ##################################################################
@@ -257,10 +259,8 @@ def load_csv(csv_file):
     cal = CalculateHelper()
     cal.load_csv(csv_file)
 
+#TODO: change rule description to work with regexes
 #TODO: create wrapper function that runs load_budget_csv, load_account_csv and load_rule_csv. At the end, check if there are any old budgets without account and delete them
-#TODO: implement load_budget_csv, load_account_csv, load_rule_csv (update)
-#TODO: implement save_budget_csv, save_account_csv, save_rule_csv
-#TODO: bootstrap with a simplified version of our actual budget
 #TODO: load_csv function
     #goes over each entry in the csv and applies the rules
     #whatever entries are not covered, get manual input
@@ -271,10 +271,10 @@ def load_csv(csv_file):
 ##################################################################
 
 if __name__ == "__main__":
-    #run()
+    run()
     #load_budget_csv(["budgets.csv"])
     #load_account_csv(["accounts.csv"])
     #load_rule_csv(["rules.csv"])
     #save_budget_csv(["budgets2.csv"])
     #save_account_csv(["accounts2.csv"])
-    save_rule_csv(["rules2.csv"])
+    #save_rule_csv(["rules2.csv"])
