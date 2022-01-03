@@ -1,4 +1,5 @@
 import csv
+import logging
 import sys
 import sqlite3
 from BudgetHelper import BudgetHelper
@@ -13,7 +14,8 @@ class RuleHelper:
             self.conn = sqlite3.connect('db/budget.db')
             self.c = self.conn.cursor()
         except sqlite3.Error as e:
-            print("Error connecting to database!")
+            logging.error("Error connecting to database!")
+            raise
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='rules'")
         if (self.c.fetchone() == None):
@@ -44,7 +46,7 @@ class RuleHelper:
             if nr[0].startswith("#"):
                 continue
             if len(nr) != 4:
-                print('Error! Missing argument in line "{}"'.format(nr))
+                logging.error('Error! Missing argument in line "{}"'.format(nr))
                 sys.exit(1)
             if nr[0] in rules_names: #changing an existing rules
                 rules_names.remove(nr[0])
@@ -70,7 +72,7 @@ class RuleHelper:
         """Checks if rule already exists (both descriptions). If it doesn't, creates it."""
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if (self.c.fetchone() != None):
-            print('There\'s already a rule called `{}` in the Database! Aborting!'.format(rule_name))
+            logging.error('There\'s already a rule called `{}` in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
 
         bud = BudgetHelper()
@@ -79,9 +81,9 @@ class RuleHelper:
 
         if rule_budget in budgets:
             self.c.execute("INSERT INTO rules VALUES (NULL, :rule_name, :rule_description1, :rule_description2, :rule_budget)", {'rule_name': rule_name, 'rule_description1': rule_description1, 'rule_description2': rule_description2, 'rule_budget': rule_budget})
-            #print('Created rule {}: description1 = `{}`, description2 = `{}` that maps to budget `{}`.'.format(rule_name, rule_description1, rule_description2, rule_budget))
+            #logging.info('Created rule {}: description1 = `{}`, description2 = `{}` that maps to budget `{}`.'.format(rule_name, rule_description1, rule_description2, rule_budget))
         else:
-            print('Budget `{}` doesn\'t exist!'.format(rule_budget))
+            logging.error('Budget `{}` doesn\'t exist!'.format(rule_budget))
             sys.exit(1)
 
         self.conn.commit()
@@ -89,7 +91,7 @@ class RuleHelper:
     def change_desc1(self, rule_name, new_desc1):
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if self.c.fetchone() == None:
-            print('There\'s no rule called `{}` in the Database! Aborting!'.format(rule_name))
+            logging.error('There\'s no rule called `{}` in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
         
         self.c.execute("UPDATE rules SET rule_description1=:new_desc1 WHERE rule_name=:rule_name", {'rule_name': rule_name, 'new_desc1': new_desc1})
@@ -98,7 +100,7 @@ class RuleHelper:
     def change_desc2(self, rule_name, new_desc2):
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if self.c.fetchone() == None:
-            print('There\'s no rule called `{}` in the Database! Aborting!'.format(rule_name))
+            logging.error('There\'s no rule called `{}` in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
         
         self.c.execute("UPDATE rules SET rule_description2=:new_desc2 WHERE rule_name=:rule_name", {'rule_name': rule_name, 'new_desc1': new_desc2})
@@ -107,7 +109,7 @@ class RuleHelper:
     def change_budget(self, rule_name, new_budget):
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if self.c.fetchone() == None:
-            print('There\'s no rule called `{}` in the Database! Aborting!'.format(rule_name))
+            logging.error('There\'s no rule called `{}` in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
         
         self.c.execute("UPDATE rules SET rule_budget=:new_budget WHERE rule_name=:rule_name", {'rule_name': rule_name, 'new_budget': new_budget})
@@ -118,7 +120,7 @@ class RuleHelper:
         self.c.execute("SELECT * FROM rules")
         rules = self.c.fetchall()
         if not rules:
-            #print('There are currently no rules!')
+            #logging.info('There are currently no rules!')
             return None
         else:
             rule_list = []
@@ -130,14 +132,14 @@ class RuleHelper:
         """Renames an existing rule"""
         self.c.execute("SELECT * FROM rules WHERE rule_name=:new_rule_name", {'new_rule_name': new_rule_name})
         if (self.c.fetchone()):
-            print('There\'s already a rule called `{}` in the Database! Aborting!'.format(new_rule_name))
+            logging.error('There\'s already a rule called `{}` in the Database! Aborting!'.format(new_rule_name))
             sys.exit(1)
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if (self.c.fetchone() != None):
             self.c.execute("UPDATE rules SET rule_name=:new_rule_name WHERE rule_name=:rule_name", {'rule_name': rule_name, 'new_rule_name': new_rule_name})
-            #print('Renamed rule `{}` to `{}`.'.format(rule_name, new_rule_name))
+            #logging.info('Renamed rule `{}` to `{}`.'.format(rule_name, new_rule_name))
         else:
-            print('Rule `{}` is not in the Database! Aborting!'.format(rule_name))
+            logging.error('Rule `{}` is not in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
         self.conn.commit()
 
@@ -145,8 +147,8 @@ class RuleHelper:
         self.c.execute("SELECT * FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
         if (self.c.fetchone() != None):
             self.c.execute("DELETE FROM rules WHERE rule_name=:rule_name", {'rule_name': rule_name})
-            #print('Deleted rule `{}`.'.format(rule_name))
+            #logging.info('Deleted rule `{}`.'.format(rule_name))
         else:
-            print('Rule `{}` is not in the Database! Aborting!'.format(rule_name))
+            logging.error('Rule `{}` is not in the Database! Aborting!'.format(rule_name))
             sys.exit(1)
         self.conn.commit()

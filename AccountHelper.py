@@ -1,4 +1,5 @@
 import csv
+import logging
 import sys
 import sqlite3
 
@@ -12,7 +13,8 @@ class AccountHelper:
             self.conn = sqlite3.connect('db/budget.db')
             self.c = self.conn.cursor()
         except sqlite3.Error as e:
-            print("Error connecting to database!")
+            logging.error("Error connecting to database!")
+            raise
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='accounts'")
         if (self.c.fetchone() == None):
@@ -55,7 +57,7 @@ class AccountHelper:
             if na[0].startswith("#"):
                 continue
             if len(na) != 3:
-                print('Error! Missing argument in line "{}"'.format(na))
+                logging.error('Error! Missing argument in line "{}"'.format(na))
                 sys.exit(1)
             if int(na[0]) in account_numbers: #changing an existing account
                 account_numbers.remove(int(na[0]))
@@ -81,16 +83,16 @@ class AccountHelper:
         """Checks if account already exists (account number and name). If it doesn't, creates it."""
         self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         if (self.c.fetchone() != None):
-            print('There\'s already an account with number `{}` in the Database! Aborting!'.format(acc_number))
+            logging.error('There\'s already an account with number `{}` in the Database! Aborting!'.format(acc_number))
             sys.exit(1)
 
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
         if (self.c.fetchone() != None):
-            print('There\'s already an account called `{}` in the Database! Aborting!'.format(acc_name))
+            logging.error('There\'s already an account called `{}` in the Database! Aborting!'.format(acc_name))
             sys.exit(1)
 
         self.c.execute("INSERT INTO accounts VALUES (NULL, :acc_number, :acc_name, :acc_balance)", {'acc_number': acc_number, 'acc_name': acc_name, 'acc_balance': acc_balance})
-        print('Created account `{}` with the account number `{}` with a balance of `{}`.'.format(acc_name, acc_number, acc_balance))
+        logging.info('Created account `{}` with the account number `{}` with a balance of `{}`.'.format(acc_name, acc_number, acc_balance))
 
         self.conn.commit()
 
@@ -98,14 +100,14 @@ class AccountHelper:
         """Renames an existing account"""
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:new_acc_name", {'new_acc_name': new_acc_name})
         if (self.c.fetchone()):
-            print('There\'s already an account called `{}` in the Database! Aborting!'.format(new_acc_name))
+            logging.error('There\'s already an account called `{}` in the Database! Aborting!'.format(new_acc_name))
             sys.exit(1)
         self.c.execute("SELECT * FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
         if (self.c.fetchone() != None):
             self.c.execute("UPDATE accounts SET acc_name=:new_acc_name WHERE acc_name=:acc_name", {'acc_name': acc_name, 'new_acc_name': new_acc_name})
-            print('Renamed account `{}` to `{}`.'.format(acc_name, new_acc_name))
+            logging.info('Renamed account `{}` to `{}`.'.format(acc_name, new_acc_name))
         else:
-            print('Account `{}` is not in the Database! Aborting!'.format(acc_name))
+            logging.error('Account `{}` is not in the Database! Aborting!'.format(acc_name))
             sys.exit(1)
         self.conn.commit()
 
@@ -115,7 +117,7 @@ class AccountHelper:
         accounts = self.c.fetchall()
         field_names = [i[0] for i in self.c.description]
         if not accounts:
-            print('There are currently no accounts!')
+            logging.info('There are currently no accounts!')
             return False
         else:
             #print('Listing all accounts:')
@@ -128,9 +130,9 @@ class AccountHelper:
         self.c.execute("SELECT * FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         if (self.c.fetchone() != None):
             self.c.execute("DELETE FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
-            #print('Deleted account `{}`.'.format(acc_number))
+            logging.info('Deleted account `{}`.'.format(acc_number))
         else:
-            print('Account `{}` is not in the Database! Aborting!'.format(acc_number))
+            logging.error('Account `{}` is not in the Database! Aborting!'.format(acc_number))
             sys.exit(1)
         self.conn.commit()
 

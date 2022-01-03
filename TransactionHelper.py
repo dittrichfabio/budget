@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 from datetime import datetime
 
@@ -10,7 +11,8 @@ class TransactionHelper:
             self.conn = sqlite3.connect('db/budget.db')
             self.c = self.conn.cursor()
         except sqlite3.Error as e:
-            print("Error connecting to database!")
+            logging.error("Error connecting to database!")
+            raise
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='transactions'")
         if (self.c.fetchone() == None):
@@ -36,7 +38,7 @@ class TransactionHelper:
         if budget:
             budget_query = "budget='{}'".format(budget)
         if anydesc and (desc1 or desc2):
-            print('anydesc is mutually exclusive with desc1/desc2!')
+            logging.error('anydesc is mutually exclusive with desc1/desc2!')
             return False
 
         if anydesc:
@@ -71,10 +73,10 @@ class TransactionHelper:
             self.c.execute("SELECT * FROM transactions WHERE {} date BETWEEN '{}' and '{}'".format(desc_query, datetime.strptime(begin, self.FORMAT), datetime.strptime(end, self.FORMAT)))
         transactions = self.c.fetchall()
         if not transactions:
-            print('There are no transactions that match the requirements!')
+            logging.info('There are no transactions that match the requirements!')
             return False
         else:
-            print('Listing all transactions:')
+            logging.info('Listing all transactions:')
             for tra in transactions:
-                print(tra)
+                logging.info(tra)
             return transactions

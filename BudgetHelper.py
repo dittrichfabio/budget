@@ -1,4 +1,5 @@
 import csv
+import logging
 import sys
 import sqlite3
 from AccountHelper import AccountHelper
@@ -13,7 +14,8 @@ class BudgetHelper:
             self.conn = sqlite3.connect('db/budget.db')
             self.c = self.conn.cursor()
         except sqlite3.Error as e:
-            print("Error connecting to database!")
+            logging.error("Error connecting to database!")
+            raise
 
         self.c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='budget'")
         if (self.c.fetchone() == None):
@@ -46,7 +48,7 @@ class BudgetHelper:
             if nb[0].startswith("#"):
                 continue
             if len(nb) != 4:
-                print('Error! Missing argument in line "{}"'.format(nb))
+                logging.error('Error! Missing argument in line "{}"'.format(nb))
                 sys.exit(1)
             if nb[0] in budget_names: #changing an existing budget
                 budget_names.remove(nb[0])
@@ -81,7 +83,7 @@ class BudgetHelper:
         """Checks if budget already exists. If it doesn't, creates it."""
         self.c.execute("SELECT * FROM budget WHERE budget_name=:budget_name", {'budget_name': budget_name})
         if (self.c.fetchone() != None):
-            print('There\'s already a budget called `{}` in the Database! Aborting!'.format(budget_name))
+            logging.error('There\'s already a budget called `{}` in the Database! Aborting!'.format(budget_name))
             sys.exit(1)
 
         acc = AccountHelper()
@@ -89,10 +91,10 @@ class BudgetHelper:
 
         if acc_id:
             self.c.execute("INSERT INTO budget VALUES (NULL, :budget_name, :budget_value, :acc_id, :budget_balance)", {'budget_value': budget_value, 'budget_name': budget_name, 'acc_id': acc_id, 'budget_balance': budget_balance})
-            #print('Created budget `{}` for {} associated to account `{}` with a balance of `{}`.'.format(budget_name, budget_value, acc_name, budget_balance))
+            #logging.info('Created budget `{}` for {} associated to account `{}` with a balance of `{}`.'.format(budget_name, budget_value, acc_name, budget_balance))
             self.conn.commit()
         else:
-            print('Account `{}` doesn\'t exist!'.format(acc_name))
+            logging.error('Account `{}` doesn\'t exist!'.format(acc_name))
             sys.exit(1)
 
 
@@ -101,7 +103,7 @@ class BudgetHelper:
         self.c.execute("SELECT * FROM budget")
         budgets = self.c.fetchall()
         if not budgets:
-            #print('There are currently no budgets!')
+            #logging.info('There are currently no budgets!')
             return None
         else:
             #print('Listing all budgets:')
@@ -118,14 +120,14 @@ class BudgetHelper:
         """Renames an existing budget"""
         self.c.execute("SELECT * FROM budget WHERE budget_name=:new_budget_name", {'new_budget_name': new_budget_name})
         if (self.c.fetchone()):
-            print('There\'s already a budget called `{}` in the Database! Aborting!'.format(new_budget_name))
+            logging.error('There\'s already a budget called `{}` in the Database! Aborting!'.format(new_budget_name))
             sys.exit(1)
         self.c.execute("SELECT * FROM budget WHERE budget_name=:budget_name", {'budget_name': budget_name})
         if (self.c.fetchone() != None):
             self.c.execute("UPDATE budget SET budget_name=:new_budget_name WHERE budget_name=:budget_name", {'budget_name': budget_name, 'new_budget_name': new_budget_name})
-            #print('Renamed budget `{}` to `{}`.'.format(budget_name, new_budget_name))
+            #logging.info('Renamed budget `{}` to `{}`.'.format(budget_name, new_budget_name))
         else:
-            print('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
+            logging.error('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
             sys.exit(1)
         self.conn.commit()
 
@@ -133,9 +135,9 @@ class BudgetHelper:
         self.c.execute("SELECT * FROM budget WHERE budget_name=:budget_name", {'budget_name': budget_name})
         if (self.c.fetchone() != None):
             self.c.execute("DELETE FROM budget WHERE budget_name=:budget_name", {'budget_name': budget_name})
-            #print('Deleted budget `{}`.'.format(budget_name))
+            #logging.info('Deleted budget `{}`.'.format(budget_name))
         else:
-            print('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
+            logging.error('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
             sys.exit(1)
         self.conn.commit()
 
@@ -143,9 +145,9 @@ class BudgetHelper:
         self.c.execute("SELECT * FROM budget WHERE budget_name=:budget_name", {'budget_name': budget_name})
         if (self.c.fetchone() != None):
             self.c.execute("UPDATE budget SET budget_value=:new_budget_value WHERE budget_name=:budget_name", {'new_budget_value': new_budget_value, 'budget_name': budget_name})
-            #print('Set budget `{}` value to `{}`.'.format(budget_name, new_budget_value))
+            #logging.info('Set budget `{}` value to `{}`.'.format(budget_name, new_budget_value))
         else:
-            print('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
+            logging.error('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
             sys.exit(1)
         self.conn.commit()
 
@@ -153,9 +155,9 @@ class BudgetHelper:
         self.c.execute("SELECT * FROM budget WHERE budget_name=:budget_name", {'budget_name': budget_name})
         if (self.c.fetchone() != None):
             self.c.execute("UPDATE budget SET budget_balance=:new_budget_balance WHERE budget_name=:budget_name", {'new_budget_balance': new_budget_balance, 'budget_name': budget_name})
-           #print('Set budget `{}` balance to `{}`.'.format(budget_name, new_budget_balance))
+           #logging.info('Set budget `{}` balance to `{}`.'.format(budget_name, new_budget_balance))
         else:
-            print('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
+            logging.error('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
             sys.exit(1)
         self.conn.commit()
 
@@ -165,8 +167,8 @@ class BudgetHelper:
             acc = AccountHelper()
             acc_id = acc.get_id(new_budget_acc)
             self.c.execute("UPDATE budget SET account_id=:acc_id WHERE budget_name=:budget_name", {'acc_id': acc_id, 'budget_name': budget_name})
-            #print('Set budget `{}` to account `{}`.'.format(budget_name, new_budget_acc))
+            #logging.info('Set budget `{}` to account `{}`.'.format(budget_name, new_budget_acc))
         else:
-            print('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
+            logging.error('Budget `{}` is not in the Database! Aborting!'.format(budget_name))
             sys.exit(1)
         self.conn.commit()

@@ -5,6 +5,7 @@ from RuleHelper import RuleHelper
 from TransactionHelper import TransactionHelper
 from Calculate import CalculateHelper
 import click
+import logging
 
 
 
@@ -20,7 +21,7 @@ def bootstrap():
     """Creates accounts, budgets and rules for testing"""
 
 @bootstrap.command('run')
-def run():
+def load_csvs():
     if os.path.exists('/mnt/c/Users/fabio_dittrich/Documents/Budget/db/budget.db'):
         os.remove('/mnt/c/Users/fabio_dittrich/Documents/Budget/db/budget.db')
     acc = AccountHelper()
@@ -271,7 +272,10 @@ def load_csv(csv_file):
 ##################################################################
 
 if __name__ == "__main__":
-    run()
+    level = logging.DEBUG
+    format = '[%(levelname)s] %(asctime)s - %(message)s'
+    logging.basicConfig(level=level, format=format)
+    load_csvs()
     #load_budget_csv(["budgets.csv"])
     #load_account_csv(["accounts.csv"])
     #load_rule_csv(["rules.csv"])
