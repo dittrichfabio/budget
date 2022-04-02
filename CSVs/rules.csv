@@ -1,3 +1,19 @@
 Rule Name,Description 1,Description 2,Budget Name
 Mortgage,MORTGAGE PAYMENT,,Mortgage
-Groceries Provigo,PROVIGO LA SALLE*,,Groceries
+Groceries Provigo,PROVIGO LA SALLE,,Groceries
+General Groceries,,Groceries,Groceries
+Roupas_Mari,,Roupas M,Roupas Mari
+Roupas_Fabio,,Roupas F,Roupas Fabio
+Coisas_Mari,,Mari,Mari
+Coisas_Fabio,,Fabio,Fabio
+Metro,FUSIUM SOLUTIONS,,STM
+General Misc,,Misc,Misc
+Communauto,COMMUNAUTO,,Carro
+Hydro,HYDRO BILL,HYDRO-QUEBEC,Hydro
+Celular,FIZZ MONTREAL QC,,Celular Fizz
+Internet,BELL CANADA,,Bell
+Insurance,INSURANCE,LA PERSONNELLE,Insurance
+Condo,MISC PAYMENT,EQ8,Condo
+Spotify,Spotify,,Spotify
+Netflix,NETFLIX,,Netflix
+General Videogames,,Videogames,Videogames

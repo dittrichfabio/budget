@@ -25,6 +25,10 @@ class AccountHelper:
         self.c.execute("SELECT accounts.acc_id FROM accounts WHERE acc_number=:acc_number", {'acc_number': acc_number})
         return self.c.fetchone()
 
+    def get_name(self, acc_id):
+        self.c.execute("SELECT accounts.acc_name FROM accounts WHERE acc_id=:acc_id", {'acc_id': acc_id})
+        return self.c.fetchone()
+
     def get_id(self, acc_name):
         self.c.execute("SELECT accounts.acc_id FROM accounts WHERE acc_name=:acc_name", {'acc_name': acc_name})
         acc_id = self.c.fetchone()

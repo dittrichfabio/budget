@@ -21,7 +21,7 @@ def bootstrap():
     """Creates accounts, budgets and rules for testing"""
 
 @bootstrap.command('run')
-def load_csvs():
+def load_bootstrap_csvs():
     if os.path.exists('/mnt/c/Users/fabio_dittrich/Documents/Budget/db/budget.db'):
         os.remove('/mnt/c/Users/fabio_dittrich/Documents/Budget/db/budget.db')
     acc = AccountHelper()
@@ -256,7 +256,7 @@ def calculate():
 
 @calculate.command('load_csv')
 @click.argument('csv_file', required=True)
-def load_csv(csv_file):
+def load_transaction_csv(csv_file):
     cal = CalculateHelper()
     cal.load_csv(csv_file)
 
@@ -275,7 +275,8 @@ if __name__ == "__main__":
     level = logging.DEBUG
     format = '[%(levelname)s] %(asctime)s - %(message)s'
     logging.basicConfig(level=level, format=format)
-    load_csvs()
+    #load_bootstrap_csvs()
+    load_transaction_csv(["2021-12-25.csv"])
     #load_budget_csv(["budgets.csv"])
     #load_account_csv(["accounts.csv"])
     #load_rule_csv(["rules.csv"])
