@@ -1,19 +1,25 @@
 Rule Name,Description 1,Description 2,Budget Name
+#General Videogames,,Videogames,Videogames
 Mortgage,MORTGAGE PAYMENT,,Mortgage
-Groceries Provigo,PROVIGO LA SALLE,,Groceries
+Groceries Provigo,PROVIGO,,Groceries
+Groceries Maxi,MAXI,,Groceries
 General Groceries,,Groceries,Groceries
-Roupas_Mari,,Roupas M,Roupas Mari
-Roupas_Fabio,,Roupas F,Roupas Fabio
-Coisas_Mari,,Mari,Mari
-Coisas_Fabio,,Fabio,Fabio
-Metro,FUSIUM SOLUTIONS,,STM
+Groceries Pharmaprix,PHARMAPRIX,,Groceries
+Clothing_Mari,,Clothing M,Clothing Mari
+Clothing_Fabio,,Clothing F,Clothing Fabio
+Mari_Stuff,,Mari,Mari
+Fabio_Stuff,,Fabio,Fabio
 General Misc,,Misc,Misc
-Communauto,COMMUNAUTO,,Carro
 Hydro,HYDRO BILL,HYDRO-QUEBEC,Hydro
 Celular,FIZZ MONTREAL QC,,Celular Fizz
 Internet,BELL CANADA,,Bell
-Insurance,INSURANCE,LA PERSONNELLE,Insurance
+Insurance,INSURANCE,LA PERSONNELLE,Home Insurance
 Condo,MISC PAYMENT,EQ8,Condo
 Spotify,Spotify,,Spotify
 Netflix,NETFLIX,,Netflix
-General Videogames,,Videogames,Videogames
+Amazon Prime,Amazon.ca Prime Member,,Amazon Prime
+Home Insurance,INSURANCE,CIE BELAIR Home,Home Insurance
+Car Insurance,INSURANCE,CIE BELAIR Car,Car Insurance
+Car Lease,AUTOMOBILE RENT,SUBARU FINANCE,Car Lease
+Car Gas Costco,COSTCO ESSENCE,,Car Gas
+Gift,,Gift,Gifts

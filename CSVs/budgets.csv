@@ -1,37 +1,41 @@
 Budget Name,Budget Value,Associated Account Name,Budget Balance
 #Fun Together,
 #Novo celular,0,Fixed Expenses,0
+#Exercises,300,Exercise,0
+#Óculos,20,Fixed Expenses,0
 #Shows,0,Shows,0
+#STM,46,Fixed Expenses,0
 #TFSA,
-#Videogame Lotro,
+Videogames,0,Videogames,0
 Amazon Prime,4,Fixed Expenses,0
-Bell,50,Fixed Expenses,0
-Carro,100,Car,0
-Casa,50,Home,0
+Bell,51,Fixed Expenses,0
+#Car Buyout,80,Car,0
+Car Insurance,33,Fixed Expenses,0
+Car Lease,209,Fixed Expenses,0
+Car Gas, 30,Car,0
+Car Maintenance, 20,Car,0
+Home,50,Home,0
 Celular Fizz,35,Fixed Expenses,0
-Condo,185,Fixed Expenses,0
+Condo,194,Fixed Expenses,0
 Crunchyroll,5,Fixed Expenses,0
-Exercícios,300,Exercise,0
 Fabio,75,Fabio,0
-Groceries,350,Groceries,0
+Groceries,300,Groceries,0
 HBP,38.49,Taxes and HBP,0
 Hydro,28,Fixed Expenses,0
-Insurance,22,Fixed Expenses,0
-Investimentos Lump sum,75,Investments,0
-Investimentos RRSP,75,Investments,0
+Home Insurance,25,Fixed Expenses,0
+Investiments Lump sum,50,Investments,0
+Investiments RRSP,50,Investments,0
 Mari Caneta SdA,40,Mari,0
 Mari,35,Mari,0
 Misc,0,Misc,300.06
 Mortgage,1432,Chequing,0
-Netflix,11,Fixed Expenses,0
-Óculos,20,Fixed Expenses,0
-Presentes Gui,15,Gifts,0
-Presentes,15,Gifts,0
-Roupas Fabio,20,Clothing,0
-Roupas Mari,20,Clothing,0
+Netflix,12,Fixed Expenses,0
+Gifts Gui,15,Gifts,0
+Gifts,15,Gifts,0
+Clothing Fabio,20,Clothing,0
+Clothing Mari,20,Clothing,0
 SAAQ,7,Fixed Expenses,0
 Spotify,7,Fixed Expenses,0
-STM,46,Fixed Expenses,0
 Taxes,180,Taxes and HBP,0
-Travels,100,Travels,0
-Videogames,50,Videogames,0
+Travels,150,Travels,0
+Videogames Lotro,10,Videogames,0
