@@ -1,6 +1,7 @@
 Rule Name,Description 1,Description 2,Budget Name
 #General Videogames,,Videogames,Videogames
 Mortgage,MORTGAGE PAYMENT,,Mortgage
+Dining,,Dining,Groceries Dining
 Groceries Provigo,PROVIGO,,Groceries
 Groceries Maxi,MAXI,,Groceries
 General Groceries,,Groceries,Groceries
@@ -11,8 +12,8 @@ Mari_Stuff,,Mari,Mari
 Fabio_Stuff,,Fabio,Fabio
 General Misc,,Misc,Misc
 Hydro,HYDRO BILL,HYDRO-QUEBEC,Hydro
-Celular,FIZZ MONTREAL QC,,Celular Fizz
-Internet,BELL CANADA,,Bell
+Celular,FIZZ,Celular,Celular Fizz
+Internet,FIZZ,Internet,Internet Fizz
 Insurance,INSURANCE,LA PERSONNELLE,Home Insurance
 Condo,MISC PAYMENT,EQ8,Condo
 Spotify,Spotify,,Spotify
@@ -22,4 +23,9 @@ Home Insurance,INSURANCE,CIE BELAIR Home,Home Insurance
 Car Insurance,INSURANCE,CIE BELAIR Car,Car Insurance
 Car Lease,AUTOMOBILE RENT,SUBARU FINANCE,Car Lease
 Car Gas Costco,COSTCO ESSENCE,,Car Gas
-Gift,,Gift,Gifts
+Gifts,,Gifts,Gifts Other
+Travels,,Travels,Travels
+Shows,,Shows,Shows
+Home,,Home,Home
+Videogames,,Videogames,Videogames
+Gym Fabio,ECONOFITNESS ADMIN,,Exercises

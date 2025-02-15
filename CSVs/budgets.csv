@@ -1,41 +1,40 @@
 Budget Name,Budget Value,Associated Account Name,Budget Balance
-#Fun Together,
-#Novo celular,0,Fixed Expenses,0
-#Exercises,300,Exercise,0
-#Óculos,20,Fixed Expenses,0
-#Shows,0,Shows,0
+#Car Buyout,80,Car,0
 #STM,46,Fixed Expenses,0
 #TFSA,
-Videogames,0,Videogames,0
-Amazon Prime,4,Fixed Expenses,0
-Bell,51,Fixed Expenses,0
-#Car Buyout,80,Car,0
-Car Insurance,33,Fixed Expenses,0
-Car Lease,209,Fixed Expenses,0
-Car Gas, 30,Car,0
-Car Maintenance, 20,Car,0
-Home,50,Home,0
-Celular Fizz,35,Fixed Expenses,0
-Condo,194,Fixed Expenses,0
-Crunchyroll,5,Fixed Expenses,0
-Fabio,75,Fabio,0
-Groceries,300,Groceries,0
-HBP,38.49,Taxes and HBP,0
+Mortgage,1434,Chequing,0
+Condo,336,Fixed Expenses,0
+Home Insurance,28,Fixed Expenses,0
+Car Lease,256,Fixed Expenses,0
+Car Insurance,47,Fixed Expenses,0
+Credit Card Annual Fee,5,Fixed Expenses,0
 Hydro,28,Fixed Expenses,0
-Home Insurance,25,Fixed Expenses,0
-Investiments Lump sum,50,Investments,0
-Investiments RRSP,50,Investments,0
-Mari Caneta SdA,40,Mari,0
-Mari,35,Mari,0
-Misc,0,Misc,300.06
-Mortgage,1432,Chequing,0
+Internet Fizz,27,Fixed Expenses,0
+Celular Fizz,25,Fixed Expenses,0
+Novo celular,25,Fixed Expenses,0
 Netflix,12,Fixed Expenses,0
-Gifts Gui,15,Gifts,0
-Gifts,15,Gifts,0
-Clothing Fabio,20,Clothing,0
+Spotify,8,Fixed Expenses,0
+Amazon Prime,5,Fixed Expenses,0
+SAAQ,2,Fixed Expenses,0
+Óculos,31,Fixed Expenses,0
+Exercises,50,Exercise,0
+Taxes,190,Taxes and HBP,0
+Misc,20,Misc,300.06
+Groceries Dining,50,Groceries,0
+Groceries,300,Groceries,0
+Mari,100,Mari,0
+Fabio,100,Fabio,0
+Videogames,30,Videogames,0
+Videogames Lotro,11,Videogames,0
+Shows,0,Shows,0
+Travels,280,Travels,0
+Car Gas,50,Car,0
+Car Maintenance,75,Car,0
+Home,100,Home,0
 Clothing Mari,20,Clothing,0
-SAAQ,7,Fixed Expenses,0
-Spotify,7,Fixed Expenses,0
-Taxes,180,Taxes and HBP,0
-Travels,150,Travels,0
-Videogames Lotro,10,Videogames,0
+Clothing Fabio,20,Clothing,0
+Gifts Gui,10,Gifts,0
+Gifts Other,25,Gifts,0
+Christmas Cards,5,Gifts,0
+Investiments RRSP,200,Investments,0
+Investiments Lump sum,200,Investments,0
