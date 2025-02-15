@@ -91,7 +91,13 @@ def load_account_csv(account_csv_file):
 @account.command('list')
 def list_accounts():
     acc = AccountHelper()
-    acc.itemize()
+    accounts = acc.itemize()
+    if accounts:
+        print('Listing all accounts:')
+        for account in accounts:
+            print('Account `{}` with number `{}` has a balance of `{}`'.format(account[1], account[0], account[2]))
+    else:
+        print('There are currently no accounts!')
 
 @account.command('rename')
 @click.argument('acc_number', required=True)
